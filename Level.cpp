@@ -40,7 +40,7 @@ gold_(50), guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	desktop.Add(guiBuildingChoice_.getWindow());
 	desktop.Add(guiBottomRight_.getWindow());
 	
-	//buildings_.push_back(Building(Building::TownCenter));
+	buildings_.push_back(Building(Building::TownCenter, sf::Vector2i(0, 0)));
 }
 
 sf::FloatRect Level::getViewBounds()
@@ -78,19 +78,42 @@ void Level::update(float dt, sf::RenderWindow &window)
 		view_.move(scrollSpeed_*dt, 0);
 	}
 	
+	sf::Vector2i mapSize(map_.getMap()->tileWidth, map_.getMap()->tileHeight);
+	
+	sf::Vector2f cursorPosition(getViewBounds().left+mousePosition.x, getViewBounds().top+mousePosition.y);
+	sf::Vector2f offset((int)cursorPosition.x%mapSize.x, (int)cursorPosition.y%mapSize.y);
+	cursorPosition-=offset;
+	cursor_.setPosition(cursorPosition.x, cursorPosition.y);
+	
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
 		Building::BuildingType choice=guiBuildingChoice_.getChoice();
-		if(!buildings_.empty() && buildings_[0].getType()==Building::TownCenter)
+		if(choice!=Building::TownCenter)
 		{
-			cout << "A town center exists!" << endl;
+			if(!buildings_.empty() && buildings_[0].getType()==Building::TownCenter)
+			{
+				if(gold_>=Building::getCost(choice))
+				{
+					bool placable=true;
+					sf::IntRect potentialRect=Building::getRect(choice, sf::Vector2i(cursorPosition.x/mapSize.x, cursorPosition.y/mapSize.y));
+					for(int x=potentialRect.left; x<potentialRect.left+potentialRect.width; x++)
+					{
+						for(int y=potentialRect.top; y<potentialRect.top+potentialRect.height; y++)
+						{
+							if(map_.getMap()->layers[0]->data[(int)x+y*map_.getMap()->width]==2)
+							{
+								placable=false;
+								break;
+							}
+						}
+					}
+					cout << placable << endl;
+				}
+			}
 		}
 	}
 	
-	sf::Vector2f cursorPosition(getViewBounds().left+mousePosition.x, getViewBounds().top+mousePosition.y);
-	sf::Vector2f offset((int)cursorPosition.x%32, (int)cursorPosition.y%32);
-	cursorPosition-=offset;
-	cursor_.setPosition(cursorPosition.x, cursorPosition.y);
+	
 	//cout << mousePosition.x << " " << mousePosition.y << endl;
 	
 	guiBottomRight_.update(dt, waves_.front().getEnemyTypes(), waves_.front().getTimeInSeconds(), gold_);

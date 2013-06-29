@@ -16,11 +16,13 @@ public:
 Map();
 Map(map<string, sf::Texture> &textures, string name);
 sf::Vector2u getMapSize();
+NLTmxMap *getMap();
 void draw(sf::RenderWindow &window);
 
 private:
 vector<vector<sf::Sprite>> sprites_;
 sf::Vector2u mapSize_;
+NLTmxMap* loadedMap_;
 
 void* loadFile( const char * filename, bool appendNull );
 };

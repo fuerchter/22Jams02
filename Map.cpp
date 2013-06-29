@@ -10,11 +10,11 @@ Map::Map(map<string, sf::Texture> &textures, string name)
 	name+=".tmx";
 	char * xml = (char*) loadFile( name.c_str(), true );
 
-    NLTmxMap* loadedMap = NLLoadTmxMap( xml );
+    loadedMap_ = NLLoadTmxMap( xml );
 
 	
 	
-	for(vector<NLTmxMapTileset*>::iterator currentTileset=loadedMap->tilesets.begin(); currentTileset!=loadedMap->tilesets.end(); currentTileset++)
+	for(vector<NLTmxMapTileset*>::iterator currentTileset=loadedMap_->tilesets.begin(); currentTileset!=loadedMap_->tilesets.end(); currentTileset++)
 	{
 		//Trim filename to assets
 		(*currentTileset)->filename=(*currentTileset)->filename.substr((*currentTileset)->filename.find("assets"));
@@ -25,14 +25,14 @@ Map::Map(map<string, sf::Texture> &textures, string name)
 	}
 	
 	//For each layer
-	for(vector<NLTmxMapLayer*>::iterator currentLayer=loadedMap->layers.begin(); currentLayer!=loadedMap->layers.end(); currentLayer++)
+	for(vector<NLTmxMapLayer*>::iterator currentLayer=loadedMap_->layers.begin(); currentLayer!=loadedMap_->layers.end(); currentLayer++)
 	{
 		//For each piece of data on currentLayer
 		for(int layerIndex=0; layerIndex<(*currentLayer)->width*(*currentLayer)->height; layerIndex++)
 		{
 			//The sprites on the current layer
 			vector<sf::Sprite> layerSprites;
-			for(vector<NLTmxMapTileset*>::iterator currentTileset=loadedMap->tilesets.begin(); currentTileset!=loadedMap->tilesets.end(); currentTileset++)
+			for(vector<NLTmxMapTileset*>::iterator currentTileset=loadedMap_->tilesets.begin(); currentTileset!=loadedMap_->tilesets.end(); currentTileset++)
 			{
 				int currentId=(*currentLayer)->data[layerIndex];
 				/*if(layerIndex%41==0)
@@ -77,13 +77,18 @@ Map::Map(map<string, sf::Texture> &textures, string name)
 		}
 	}
 	
-	mapSize_.x=loadedMap->width*loadedMap->tileWidth;
-	mapSize_.y=loadedMap->height*loadedMap->tileHeight;
+	mapSize_.x=loadedMap_->width*loadedMap_->tileWidth;
+	mapSize_.y=loadedMap_->height*loadedMap_->tileHeight;
 }
 
 sf::Vector2u Map::getMapSize()
 {
 	return mapSize_;
+}
+
+NLTmxMap *Map::getMap()
+{
+	return loadedMap_;
 }
 
 void Map::draw(sf::RenderWindow &window)

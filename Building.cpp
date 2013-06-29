@@ -1,7 +1,7 @@
 #include "Building.h"
 
-Building::Building(BuildingType type):
-type_(type)
+Building::Building(BuildingType type, sf::Vector2i position):
+type_(type), position_(position)
 {
 	switch(type_)
 	{
@@ -40,7 +40,32 @@ int Building::getCost(BuildingType type)
 		return 10;
 		break;
 	default:
-		return 10;
+		return -1;
+		break;
+	}
+}
+
+sf::IntRect Building::getRect(BuildingType type, sf::Vector2i position)
+{
+	switch(type)
+	{
+	case TownCenter:
+		return sf::IntRect(position.x, position.y, 3, 3);
+		break;
+	case House:
+		return sf::IntRect(position.x, position.y, 2, 2);
+		break;
+	case Wall:
+		return sf::IntRect(position.x, position.y, 3, 1);
+		break;
+	case Turret:
+		return sf::IntRect(position.x, position.y, 1, 1);
+		break;
+	case Bank:
+		return sf::IntRect(position.x, position.y, 4, 4);
+		break;
+	default:
+		return sf::IntRect(-1, -1, -1, -1);
 		break;
 	}
 }
