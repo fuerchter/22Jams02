@@ -16,21 +16,28 @@ using namespace rapidxml;
 
 #include "Map.h"
 #include "Wave.h"
+#include "Building.h"
+#include "GuiBuildingChoice.h"
+#include "GuiBottomRight.h"
 
 class Level
 {
 public:
-	Level(map<string, sf::Texture> &textures, string name, sf::Vector2u windowSize);
+	Level(map<string, sf::Texture> &textures, string name, sf::Vector2u windowSize, sfg::Desktop &desktop);
 	sf::FloatRect getViewBounds();
 	void update(float dt, sf::RenderWindow &window);
 	void draw(sf::RenderWindow &window);
 private:
 	Map map_;
 	queue<Wave> waves_;
+	vector<Building> buildings_;
+	int gold_;
 	sf::View view_;
 	int scrollThreshold_;
 	int scrollSpeed_;
 	sf::Sprite cursor_;
+	GuiBuildingChoice guiBuildingChoice_;
+	GuiBottomRight guiBottomRight_;
 };
 
 #endif

@@ -4,15 +4,20 @@
 #include <string>
 using namespace std;
 
+#include <SFGUI/SFGUI.hpp>
+
 #include "Level.h"
 
 int main (int argc, const char * argv[])
 {	
+	sfg::SFGUI sfgui;
+	sfg::Desktop desktop;
+
 	map<string, sf::Texture> textures;
 	
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "test");
 	
-	Level level(textures, "1", window.getSize());
+	Level level(textures, "1", window.getSize(), desktop);
 	
 	sf::Clock clock;
 	sf::Time previousTick=clock.getElapsedTime();
@@ -26,6 +31,7 @@ int main (int argc, const char * argv[])
 		sf::Event event;
 		while(window.pollEvent(event))
 		{
+			desktop.HandleEvent(event);
 			switch(event.type)
 			{
 			case sf::Event::Closed:
@@ -50,12 +56,14 @@ int main (int argc, const char * argv[])
 		
 		//UPDATE SECTION
 		level.update(deltaTime.asSeconds(), window);
+		desktop.Update(deltaTime.asSeconds());
 		//UPDATE SECTION
 		
 		window.clear();
 		
 		//DRAW SECTION
 		level.draw(window);
+		sfgui.Display(window);
 		//DRAW SECTION
 		
 		window.display();

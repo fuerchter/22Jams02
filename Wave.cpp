@@ -1,7 +1,7 @@
 #include "Wave.h"
 
 Wave::Wave(float timeInSeconds, vector<int> enemies):
-timeInSeconds_(timeInSeconds)
+timeInSeconds_(timeInSeconds), enemyTypes_(enemies)
 {
 	for(int enemyIndex=0; enemyIndex<enemies.size(); enemyIndex++)
 	{
@@ -15,6 +15,11 @@ timeInSeconds_(timeInSeconds)
 float Wave::getTimeInSeconds()
 {
 	return timeInSeconds_;
+}
+
+vector<int> Wave::getEnemyTypes()
+{
+	return enemyTypes_;
 }
 
 void Wave::update(float dt)
