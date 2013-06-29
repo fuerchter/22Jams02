@@ -12,6 +12,7 @@ using namespace std;
 class Map
 {
 public:
+Map();
 Map(map<string, sf::Texture> &textures, string name);
 void draw(sf::RenderWindow &window);
 

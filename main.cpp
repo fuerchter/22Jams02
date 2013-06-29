@@ -4,13 +4,13 @@
 #include <string>
 using namespace std;
 
-#include "Map.h"
+#include "Level.h"
 
 int main (int argc, const char * argv[])
 {	
 	map<string, sf::Texture> textures;
 	
-	Map map(textures, "levels/1/1");
+	Level level(textures, "1");
 	
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "test");
 	
@@ -20,10 +20,6 @@ int main (int argc, const char * argv[])
 	
 	sf::Time counter=clock.getElapsedTime();
 	int fps=0;
-	
-	string test="../../assets/tileset-shinygold.png";
-	test=test.substr(test.find("assets"));
-	cout << test << endl;
 	
 	while(window.isOpen())
 	{
@@ -59,7 +55,7 @@ int main (int argc, const char * argv[])
 		window.clear();
 		
 		//DRAW SECTION
-		map.draw(window);
+		level.draw(window);
 		//DRAW SECTION
 		
 		window.display();
