@@ -29,6 +29,12 @@ Level::Level(map<string, sf::Texture> &textures, string name, sf::Vector2u windo
 	
 	scrollThreshold_=8;
 	scrollSpeed_=128;
+	
+	string cursorFileName="assets/cursor.png";
+	sf::Texture cursorTexture;
+	cursorTexture.loadFromFile(cursorFileName);
+	textures.insert(pair<string, sf::Texture>(cursorFileName, cursorTexture));
+	cursor_.setTexture(textures[cursorFileName]);
 }
 
 sf::FloatRect Level::getViewBounds()
@@ -65,6 +71,11 @@ void Level::update(float dt, sf::RenderWindow &window)
 	{
 		view_.move(scrollSpeed_*dt, 0);
 	}
+	
+	sf::Vector2f cursorPosition(getViewBounds().left+mousePosition.x, getViewBounds().top+mousePosition.y);
+	sf::Vector2f offset((int)cursorPosition.x%32, (int)cursorPosition.y%32);
+	cursorPosition-=offset;
+	cursor_.setPosition(cursorPosition.x, cursorPosition.y);
 	//cout << mousePosition.x << " " << mousePosition.y << endl;
 }
 
@@ -72,4 +83,5 @@ void Level::draw(sf::RenderWindow &window)
 {
 	window.setView(view_);
 	map_.draw(window);
+	window.draw(cursor_);
 }

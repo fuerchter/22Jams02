@@ -30,6 +30,7 @@ private:
 	sf::View view_;
 	int scrollThreshold_;
 	int scrollSpeed_;
+	sf::Sprite cursor_;
 };
 
 #endif
