@@ -1,0 +1,14 @@
+CC=g++
+CFLAGS=-c -Wall -std=c++11
+NLTMX=C:/Users/fuerchter/Downloads/NLTmxMap
+SFML=C:/Users/fuerchter/Downloads/FULLSFML3
+SFGUI=C:/Users/fuerchter/Downloads/SFGUI
+
+all : main.o Map.o
+	$(CC) main.o Map.o -L$(SFML)/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -L$(SFGUI)/lib -lsfgui -L$(NLTMX) -lNLTmxMap
+	
+main.o : main.cpp Map.h Map.cpp
+	$(CC) $(CFLAGS) main.cpp -I$(SFML)/include -I$(NLTMX)
+	
+Map.o : Map.h Map.cpp
+	$(CC) $(CFLAGS) Map.cpp -I$(SFML)/include -I$(NLTMX)
