@@ -49,7 +49,7 @@ int main (int argc, const char * argv[])
 		}
 		
 		//UPDATE SECTION
-
+		level.update(deltaTime.asSeconds());
 		//UPDATE SECTION
 		
 		window.clear();

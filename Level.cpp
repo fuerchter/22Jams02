@@ -21,8 +21,20 @@ Level::Level(map<string, sf::Texture> &textures, string name)
 		enemies.push_back(ghosts);
 		enemies.push_back(godzillas);
 		
-		waves_.push_back(Wave(timeInSeconds, enemies));
+		waves_.push(Wave(timeInSeconds, enemies));
 		wave=wave->next_sibling();
+	}
+}
+
+void Level::update(float dt)
+{
+	if(waves_.front().getTimeInSeconds()>0)
+	{
+		waves_.front().update(dt);
+	}
+	else
+	{
+		//Attack!!!
 	}
 }
 

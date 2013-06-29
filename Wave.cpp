@@ -11,3 +11,14 @@ timeInSeconds_(timeInSeconds)
 		}
 	}
 }
+
+float Wave::getTimeInSeconds()
+{
+	return timeInSeconds_;
+}
+
+void Wave::update(float dt)
+{
+	cout << "Next wave: " << timeInSeconds_ << endl;
+	timeInSeconds_-=dt;
+}

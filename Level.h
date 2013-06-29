@@ -4,9 +4,11 @@
 #include <map>
 #include <iostream>
 #include <cstdlib>
+#include <queue>
 using namespace std;
 
 #include "SFML/Graphics.hpp"
+#include "SFML/System.hpp"
 
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
@@ -19,10 +21,12 @@ class Level
 {
 public:
 	Level(map<string, sf::Texture> &textures, string name);
+	void update(float dt);
 	void draw(sf::RenderWindow &window);
 private:
 	Map map_;
-	vector<Wave> waves_;
+	queue<Wave> waves_;
+	//sf::Clock clock_;
 };
 
 #endif

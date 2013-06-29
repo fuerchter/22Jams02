@@ -1,9 +1,6 @@
 #ifndef ENEMY
 #define ENEMY
 
-#include <iostream>
-using namespace std;
-
 class Enemy
 {
 public:
