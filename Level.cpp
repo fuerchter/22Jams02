@@ -1,6 +1,6 @@
 #include "Level.h"
 
-Level::Level(map<string, sf::Texture> &textures, string name)
+Level::Level(map<string, sf::Texture> &textures, string name, sf::Vector2u windowSize)
 {
 	string folderName="levels/" +name;
 	map_=Map(textures, folderName+ "/level");
@@ -24,9 +24,19 @@ Level::Level(map<string, sf::Texture> &textures, string name)
 		waves_.push(Wave(timeInSeconds, enemies));
 		wave=wave->next_sibling();
 	}
+	
+	view_=sf::View(sf::FloatRect(0, 0, windowSize.x, windowSize.y));
+	
+	scrollThreshold_=8;
+	scrollSpeed_=128;
 }
 
-void Level::update(float dt)
+sf::FloatRect Level::getViewBounds()
+{
+	return sf::FloatRect(view_.getCenter().x-view_.getSize().x/2, view_.getCenter().y-view_.getSize().y/2, view_.getSize().x, view_.getSize().y);
+}
+
+void Level::update(float dt, sf::RenderWindow &window)
 {
 	if(waves_.front().getTimeInSeconds()>0)
 	{
@@ -36,9 +46,30 @@ void Level::update(float dt)
 	{
 		//Attack!!!
 	}
+	
+	//cout << getViewBounds().left+getViewBounds().width << " " << getViewBounds().top+getViewBounds().height << endl;
+	sf::Vector2i mousePosition=sf::Mouse::getPosition(window);
+	if(mousePosition.y<=scrollThreshold_ && getViewBounds().top-scrollSpeed_*dt>0)
+	{
+		view_.move(0, -scrollSpeed_*dt);
+	}
+	if(mousePosition.y>=(int)window.getSize().y-scrollThreshold_ && getViewBounds().top+getViewBounds().height+scrollSpeed_*dt<map_.getMapSize().y)
+	{
+		view_.move(0, scrollSpeed_*dt);
+	}
+	if(mousePosition.x<=scrollThreshold_ && getViewBounds().left-scrollSpeed_*dt>0)
+	{
+		view_.move(-scrollSpeed_*dt, 0);
+	}
+	if(mousePosition.x>=(int)window.getSize().x-scrollThreshold_ && getViewBounds().left+getViewBounds().width+scrollSpeed_*dt<map_.getMapSize().x)
+	{
+		view_.move(scrollSpeed_*dt, 0);
+	}
+	//cout << mousePosition.x << " " << mousePosition.y << endl;
 }
 
 void Level::draw(sf::RenderWindow &window)
 {
+	window.setView(view_);
 	map_.draw(window);
 }

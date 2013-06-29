@@ -35,7 +35,11 @@ Map::Map(map<string, sf::Texture> &textures, string name)
 			for(vector<NLTmxMapTileset*>::iterator currentTileset=loadedMap->tilesets.begin(); currentTileset!=loadedMap->tilesets.end(); currentTileset++)
 			{
 				int currentId=(*currentLayer)->data[layerIndex];
-				
+				/*if(layerIndex%41==0)
+				{
+					cout << "\n" << endl;
+				}
+				cout << currentId;*/
 				//Pixelsize of current tileset
 				sf::Vector2u tilesetSize=textures[(*currentTileset)->filename].getSize();
 				//How many tiles (x and y) are in the current tileset
@@ -52,17 +56,18 @@ Map::Map(map<string, sf::Texture> &textures, string name)
 					
 					//Position on tileset in pixel
 					sf::Vector2u texturePosition;
+					
 									//In tiles							conversion to pixel
-					texturePosition.x=((currentId%(int)tileCount.x)-1)*(*currentTileset)->tileWidth; //-2?
-					texturePosition.y=(currentId/(int)tileCount.x)*(*currentTileset)->tileHeight;
+					texturePosition.x=((currentId-1)%(int)tileCount.x)*(*currentTileset)->tileWidth; //-2?
+					texturePosition.y=((currentId-1)/(int)tileCount.x)*(*currentTileset)->tileHeight;
 					
 					sf::IntRect textureRect(texturePosition.x, texturePosition.y, (*currentTileset)->tileWidth, (*currentTileset)->tileHeight);
 					sprite.setTextureRect(textureRect);
 					
 					//Similar to above
 					sf::Vector2i spritePosition;
-					spritePosition.x=(layerIndex%(*currentLayer)->height)*(*currentTileset)->tileWidth;
-					spritePosition.y=(layerIndex/(*currentLayer)->width)*(*currentTileset)->tileHeight;
+					spritePosition.x=(layerIndex%((*currentLayer)->width))*(*currentTileset)->tileWidth;
+					spritePosition.y=(layerIndex/((*currentLayer)->width))*(*currentTileset)->tileHeight;
 					sprite.setPosition(spritePosition.x, spritePosition.y);
 					
 					layerSprites.push_back(sprite);
@@ -71,6 +76,14 @@ Map::Map(map<string, sf::Texture> &textures, string name)
 			sprites_.push_back(layerSprites);
 		}
 	}
+	
+	mapSize_.x=loadedMap->width*loadedMap->tileWidth;
+	mapSize_.y=loadedMap->height*loadedMap->tileHeight;
+}
+
+sf::Vector2u Map::getMapSize()
+{
+	return mapSize_;
 }
 
 void Map::draw(sf::RenderWindow &window)

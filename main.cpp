@@ -10,9 +10,9 @@ int main (int argc, const char * argv[])
 {	
 	map<string, sf::Texture> textures;
 	
-	Level level(textures, "1");
-	
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "test");
+	
+	Level level(textures, "1", window.getSize());
 	
 	sf::Clock clock;
 	sf::Time previousTick=clock.getElapsedTime();
@@ -49,7 +49,7 @@ int main (int argc, const char * argv[])
 		}
 		
 		//UPDATE SECTION
-		level.update(deltaTime.asSeconds());
+		level.update(deltaTime.asSeconds(), window);
 		//UPDATE SECTION
 		
 		window.clear();

@@ -20,13 +20,16 @@ using namespace rapidxml;
 class Level
 {
 public:
-	Level(map<string, sf::Texture> &textures, string name);
-	void update(float dt);
+	Level(map<string, sf::Texture> &textures, string name, sf::Vector2u windowSize);
+	sf::FloatRect getViewBounds();
+	void update(float dt, sf::RenderWindow &window);
 	void draw(sf::RenderWindow &window);
 private:
 	Map map_;
 	queue<Wave> waves_;
-	//sf::Clock clock_;
+	sf::View view_;
+	int scrollThreshold_;
+	int scrollSpeed_;
 };
 
 #endif

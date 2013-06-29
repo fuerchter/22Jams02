@@ -19,6 +19,6 @@ float Wave::getTimeInSeconds()
 
 void Wave::update(float dt)
 {
-	cout << "Next wave: " << timeInSeconds_ << endl;
+	//cout << "Next wave: " << timeInSeconds_ << endl;
 	timeInSeconds_-=dt;
 }
