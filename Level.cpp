@@ -31,19 +31,18 @@ gold_(50), guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	scrollThreshold_=8;
 	scrollSpeed_=128;
 	
-	string cursorFileName="assets/cursor.png";
-	sf::Texture cursorTexture;
-	cursorTexture.loadFromFile(cursorFileName);
-	textures.insert(pair<string, sf::Texture>(cursorFileName, cursorTexture));
-	cursor_.setTexture(textures[cursorFileName]);
-	
 	desktop.Add(guiBuildingChoice_.getWindow());
 	desktop.Add(guiBottomRight_.getWindow());
 	
+	string buildingsName="assets/buildings.png";
 	sf::Texture buildingsTexture;
-	buildingsTexture.loadFromFile("assets/buildings.png");
-	textures.insert(pair<string, sf::Texture>("assets/buildings.png", buildingsTexture));
-	//buildings_.push_back(Building(Building::TownCenter, sf::Vector2i(0, 0), textures));
+	buildingsTexture.loadFromFile(buildingsName);
+	textures.insert(pair<string, sf::Texture>(buildingsName, buildingsTexture));
+	
+	cursor_=sf::Sprite(textures[buildingsName]);
+	cursor_.setTextureRect(sf::IntRect(Building::getTilesetPosition(Building::TownCenter).x*32, Building::getTilesetPosition(Building::TownCenter).y*32, Building::getRect(Building::TownCenter, sf::Vector2i(0, 0)).width*32, Building::getRect(Building::TownCenter, sf::Vector2i(0, 0)).height*32));
+	//Half transparent preview
+	cursor_.setColor(sf::Color(255, 255, 255, 122));
 }
 
 sf::FloatRect Level::getViewBounds()
@@ -86,12 +85,16 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 	sf::Vector2f cursorPosition(getViewBounds().left+mousePosition.x, getViewBounds().top+mousePosition.y);
 	sf::Vector2f offset((int)cursorPosition.x%mapSize.x, (int)cursorPosition.y%mapSize.y);
 	cursorPosition-=offset;
+	
+	Building::BuildingType choice=guiBuildingChoice_.getChoice();
+	cursor_.setTextureRect(sf::IntRect(Building::getTilesetPosition(choice).x*32, Building::getTilesetPosition(choice).y*32, Building::getRect(choice, sf::Vector2i(0, 0)).width*32, Building::getRect(choice, sf::Vector2i(0, 0)).height*32));
 	cursor_.setPosition((int)cursorPosition.x, (int)cursorPosition.y);
+	
+	
 	
 	//If mouse is not on top of Building choice menu we can place
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && !guiBuildingChoice_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y))
 	{
-		Building::BuildingType choice=guiBuildingChoice_.getChoice();
 		bool placable=true;
 		sf::IntRect potentialRect=Building::getRect(choice, sf::Vector2i(cursorPosition.x/mapSize.x, cursorPosition.y/mapSize.y));
 		for(int x=potentialRect.left; x<potentialRect.left+potentialRect.width; x++)
