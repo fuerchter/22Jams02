@@ -1,7 +1,7 @@
 #include "Level.h"
 
 Level::Level(map<string, sf::Texture> &textures, map<string, sf::SoundBuffer> &sounds, string name, sf::Vector2u windowSize, sfg::Desktop &desktop):
-guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
+guiBuildingChoice_(windowSize), guiBottomRight_(windowSize), status_(Status::Playing)
 {
 	string folderName="levels/" +name;
 	map_=Map(textures, folderName+ "/level");
@@ -38,10 +38,10 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	townCenter.slowing=0;
 	
 	BuildingStats house;
-	house.cost=10;
+	house.cost=15;
 	house.moneyPerMinute=10;
 	house.damagePerSecond=0;
-	house.maxHp=100;
+	house.maxHp=85;
 	house.slowing=0;
 	
 	BuildingStats wall;
@@ -49,18 +49,18 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	wall.moneyPerMinute=5;
 	wall.damagePerSecond=0;
 	wall.maxHp=100;
-	wall.slowing=0.5;
+	wall.slowing=1;
 	
 	BuildingStats turret;
 	turret.cost=25;
-	turret.moneyPerMinute=5;
+	turret.moneyPerMinute=0;
 	turret.damagePerSecond=5;
-	turret.maxHp=100;
+	turret.maxHp=90;
 	turret.slowing=0;
 	
 	BuildingStats bank;
-	bank.cost=20;
-	bank.moneyPerMinute=20;
+	bank.cost=75;
+	bank.moneyPerMinute=60;
 	bank.damagePerSecond=0;
 	bank.maxHp=100;
 	bank.slowing=0;
@@ -79,11 +79,11 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	EnemyStats ghost;
 	ghost.hp=200;
 	ghost.secondsPerHit=1.5;
-	ghost.damagePerHit=20;
+	ghost.damagePerHit=10;
 	
 	EnemyStats godzilla;
-	godzilla.hp=150;
-	godzilla.secondsPerHit=4;
+	godzilla.hp=400;
+	godzilla.secondsPerHit=2;
 	godzilla.damagePerHit=25;
 	
 	enemyStats_.insert(pair<Enemy::EnemyType, EnemyStats>(Enemy::Zombie, zombie));
@@ -98,15 +98,15 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	//Balancing stuff!
 	gold_=50;
 	scrollThreshold_=8;
-	scrollSpeed_=128;
-	incomeClockTime_=30;
+	scrollSpeed_=300;
+	incomeClockTime_=25;
 	baseDamage_=20;
 	
 	desktop.Add(guiBuildingChoice_.getWindow());
 	desktop.Add(guiBottomRight_.getWindow());
-	desktop.Add(guiBalancing_.getWindow());
+	/*desktop.Add(guiBalancing_.getWindow());
 	desktop.Add(guiBuildingBalancing_.getWindow());
-	desktop.Add(guiEnemyBalancing_.getWindow());
+	desktop.Add(guiEnemyBalancing_.getWindow());*/
 	
 	guiBalancing_.addItem(make_pair("scrollThreshold", scrollThreshold_));
 	guiBalancing_.addItem(make_pair("scrollSpeed", scrollSpeed_));
@@ -187,6 +187,11 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 sf::FloatRect Level::getViewBounds()
 {
 	return sf::FloatRect(view_.getCenter().x-view_.getSize().x/2, view_.getCenter().y-view_.getSize().y/2, view_.getSize().x, view_.getSize().y);
+}
+
+Level::Status Level::getStatus()
+{
+	return status_;
 }
 
 void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> &textures)
@@ -320,13 +325,13 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 			
 			if(buildings_.empty())
 			{
-				cout << "lose" << endl;
+				status_=Status::Lose;
 			}
 		}
 	}
 	else
 	{
-		cout << "win" << endl;
+		status_=Status::Win;
 	}
 	
 	//Scroll if mouse is scrollThreshold_ pixels from the screen edge
@@ -391,6 +396,11 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 					break;
 				}
 			}
+		}
+		
+		if(potentialRect.left+potentialRect.width>map_.getMap()->width || potentialRect.top+potentialRect.height>map_.getMap()->height)
+		{
+			placable=false;
 		}
 		
 		//Placing on top of a building?

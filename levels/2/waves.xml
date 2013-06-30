@@ -1,0 +1,7 @@
+<waves>
+    <wave timeInSeconds="15" zombies="1" ghosts="0" godzillas="0" />
+    <wave timeInSeconds="30" zombies="3" ghosts="0" godzillas="0" />
+    <wave timeInSeconds="45" zombies="7" ghosts="0" godzillas="0" />
+	<wave timeInSeconds="80" zombies="0" ghosts="2" godzillas="0" />
+	<wave timeInSeconds="45" zombies="2" ghosts="3" godzillas="0" />
+</waves>

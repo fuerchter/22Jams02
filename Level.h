@@ -27,8 +27,15 @@ using namespace rapidxml;
 class Level
 {
 public:
+	enum Status
+	{
+		Playing,
+		Win,
+		Lose
+	};
 	Level(map<string, sf::Texture> &textures, map<string, sf::SoundBuffer> &sounds, string name, sf::Vector2u windowSize, sfg::Desktop &desktop);
 	sf::FloatRect getViewBounds();
+	Status getStatus();
 	void update(float dt, sf::RenderWindow &window, map<string, sf::Texture> &textures);
 	void draw(sf::RenderWindow &window);
 private:
@@ -52,6 +59,7 @@ private:
 	int baseDamage_;
 	map<Building::BuildingType, BuildingStats> buildingStats_;
 	map<Enemy::EnemyType, EnemyStats> enemyStats_;
+	Status status_;
 };
 
 #endif

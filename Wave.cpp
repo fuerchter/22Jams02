@@ -77,8 +77,11 @@ int Wave::update(float dt, int damageTaken, int slowing)
 					enemies_.erase(enemyIt);
 					enemyIt--;
 				}
-				takenDamageTimer_.restart();
 			}
+		}
+		if(takenDamageTimer_.getElapsedTime().asSeconds()>=1)
+		{
+			takenDamageTimer_.restart();
 		}
 	}
 	return damage;

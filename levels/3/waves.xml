@@ -1,0 +1,13 @@
+<waves>
+    <wave timeInSeconds="15" zombies="1" ghosts="0" godzillas="0" />
+    <wave timeInSeconds="40" zombies="2" ghosts="1" godzillas="0" />
+    <wave timeInSeconds="45" zombies="4" ghosts="1" godzillas="0" />
+	<wave timeInSeconds="65" zombies="2" ghosts="2" godzillas="0" />
+	<wave timeInSeconds="80" zombies="3" ghosts="3" godzillas="0" />
+	<wave timeInSeconds="90" zombies="4" ghosts="3" godzillas="0" />
+	<wave timeInSeconds="90" zombies="5" ghosts="4" godzillas="0" />
+	<wave timeInSeconds="70" zombies="0" ghosts="0" godzillas="1" />
+	<wave timeInSeconds="70" zombies="2" ghosts="0" godzillas="1" />
+	<wave timeInSeconds="70" zombies="2" ghosts="2" godzillas="1" />
+	<wave timeInSeconds="70" zombies="0" ghosts="0" godzillas="3" />
+</waves>

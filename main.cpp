@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <cstdlib>
 #include <string>
@@ -20,7 +21,21 @@ int main (int argc, const char * argv[])
 	
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "test");
 	
-	Level level(textures, sounds, "1", window.getSize(), desktop);
+	int levelCounter=1;
+	
+	
+	ifstream save ("save.txt");
+	if (save.is_open())
+	{
+		string line;
+		getline(save,line);
+		levelCounter=atoi(line.c_str());
+		save.close();
+	}
+	stringstream s;
+	s << levelCounter;
+	cout << s.str() << endl;
+	Level level(textures, sounds, s.str(), window.getSize(), desktop);
 	
 	sf::Clock clock;
 	sf::Time previousTick=clock.getElapsedTime();
@@ -60,6 +75,36 @@ int main (int argc, const char * argv[])
 		//UPDATE SECTION
 		level.update(deltaTime.asSeconds(), window, textures);
 		desktop.Update(deltaTime.asSeconds());
+		if(level.getStatus()==Level::Win)
+		{
+			levelCounter++;
+			if(levelCounter>3)
+			{
+				levelCounter=3;
+				window.close();
+			}
+			ofstream save;
+			save.open ("save.txt");
+			stringstream s;
+			s << levelCounter;
+			save << s.str();
+			save.close();
+		}
+		if(level.getStatus()!=Level::Playing)
+		{
+			ifstream save ("save.txt");
+			if (save.is_open())
+			{
+				string line;
+				getline(save,line);
+				levelCounter=atoi(line.c_str());
+				save.close();
+			}
+			stringstream s;
+			s << levelCounter;
+			desktop.RemoveAll();
+			level=Level(textures, sounds, s.str(), window.getSize(), desktop);
+		}
 		//UPDATE SECTION
 		
 		window.clear();
