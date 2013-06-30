@@ -16,8 +16,11 @@ public:
 	sf::Clock hitTimer;
 	EnemyType getType();
 	int decreaseHp(int amount);
+	void setHp(int amount);
 	float getSecondsPerHit();
+	void setSecondsPerHit(float amount);
 	int getDamagePerHit();
+	void setDamagePerHit(int amount);
 private:
 	EnemyType type_;
 	int hp_;

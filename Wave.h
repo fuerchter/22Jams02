@@ -1,11 +1,13 @@
 #ifndef WAVE
 #define WAVE
 
+#include <map>
 #include <iostream>
 #include <vector>
 using namespace std;
 
 #include "Enemy.h"
+#include "EnemyStats.h"
 
 class Wave
 {
@@ -14,6 +16,7 @@ public:
 	float getTimeInSeconds();
 	vector<Enemy> getEnemies();
 	vector<int> getEnemyTypes();
+	void changeEnemyStats(map<Enemy::EnemyType, EnemyStats> enemyStats, bool first=false);
 	int update(float dt, int damageTaken=0, int slowing=0);
 private:
 	float timeInSeconds_;
