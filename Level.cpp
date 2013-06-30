@@ -34,7 +34,7 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	townCenter.cost=10;
 	townCenter.moneyPerMinute=5;
 	townCenter.damagePerSecond=0;
-	townCenter.maxHp=100;
+	townCenter.maxHp=180;
 	townCenter.slowing=0;
 	
 	BuildingStats house;
@@ -52,7 +52,7 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	wall.slowing=0.5;
 	
 	BuildingStats turret;
-	turret.cost=10;
+	turret.cost=25;
 	turret.moneyPerMinute=5;
 	turret.damagePerSecond=5;
 	turret.maxHp=100;
@@ -77,8 +77,8 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	zombie.damagePerHit=2;
 	
 	EnemyStats ghost;
-	ghost.hp=60;
-	ghost.secondsPerHit=2;
+	ghost.hp=200;
+	ghost.secondsPerHit=1.5;
 	ghost.damagePerHit=20;
 	
 	EnemyStats godzilla;
@@ -90,11 +90,16 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	enemyStats_.insert(pair<Enemy::EnemyType, EnemyStats>(Enemy::Ghost, ghost));
 	enemyStats_.insert(pair<Enemy::EnemyType, EnemyStats>(Enemy::Godzilla, godzilla));
 	
+	for(vector<Wave>::iterator waveIt=waves_.begin(); waveIt!=waves_.end(); waveIt++)
+	{
+		waveIt->changeEnemyStats(enemyStats_);
+	}
+	
 	//Balancing stuff!
 	gold_=50;
 	scrollThreshold_=8;
 	scrollSpeed_=128;
-	incomeClockTime_=15;
+	incomeClockTime_=30;
 	baseDamage_=20;
 	
 	desktop.Add(guiBuildingChoice_.getWindow());
@@ -292,7 +297,6 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 				totalDmgPerSec+=buildingIt->getDamagePerSecond();
 				totalSlowing+=buildingIt->getSlowing();
 			}
-			
 			int buildingDamage=waves_[0].update(dt, totalDmgPerSec, totalSlowing);
 			
 			//Reducing building HP
