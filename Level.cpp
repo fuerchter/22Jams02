@@ -23,7 +23,8 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 		enemies.push_back(ghosts);
 		enemies.push_back(godzillas);
 		
-		waves_.push(Wave(timeInSeconds, enemies));
+		waves_.push_back(Wave(timeInSeconds, enemies));
+		
 		wave=wave->next_sibling();
 	}
 	
@@ -70,6 +71,25 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	buildingStats_.insert(pair<Building::BuildingType, BuildingStats>(Building::Turret, turret));
 	buildingStats_.insert(pair<Building::BuildingType, BuildingStats>(Building::Bank, bank));
 	
+	EnemyStats zombie;
+	zombie.hp=100;
+	zombie.secondsPerHit=0.5;
+	zombie.damagePerHit=2;
+	
+	EnemyStats ghost;
+	ghost.hp=60;
+	ghost.secondsPerHit=2;
+	ghost.damagePerHit=20;
+	
+	EnemyStats godzilla;
+	godzilla.hp=150;
+	godzilla.secondsPerHit=4;
+	godzilla.damagePerHit=25;
+	
+	enemyStats_.insert(pair<Enemy::EnemyType, EnemyStats>(Enemy::Zombie, zombie));
+	enemyStats_.insert(pair<Enemy::EnemyType, EnemyStats>(Enemy::Ghost, ghost));
+	enemyStats_.insert(pair<Enemy::EnemyType, EnemyStats>(Enemy::Godzilla, godzilla));
+	
 	//Balancing stuff!
 	gold_=50;
 	scrollThreshold_=8;
@@ -81,6 +101,7 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	desktop.Add(guiBottomRight_.getWindow());
 	desktop.Add(guiBalancing_.getWindow());
 	desktop.Add(guiBuildingBalancing_.getWindow());
+	desktop.Add(guiEnemyBalancing_.getWindow());
 	
 	guiBalancing_.addItem(make_pair("scrollThreshold", scrollThreshold_));
 	guiBalancing_.addItem(make_pair("scrollSpeed", scrollSpeed_));
@@ -116,6 +137,18 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	guiBuildingBalancing_.addItem(make_pair("Bank damagePerSecond", buildingStats_[Building::Bank].damagePerSecond));
 	guiBuildingBalancing_.addItem(make_pair("Bank maxHp", buildingStats_[Building::Bank].maxHp));
 	guiBuildingBalancing_.addItem(make_pair("Bank slowing", buildingStats_[Building::Bank].slowing));
+	
+	guiEnemyBalancing_.addItem(make_pair("Zombie hp", enemyStats_[Enemy::Zombie].hp));
+	guiEnemyBalancing_.addItem(make_pair("Zombie secondsPerHit", enemyStats_[Enemy::Zombie].secondsPerHit));
+	guiEnemyBalancing_.addItem(make_pair("Zombie damagePerHit", enemyStats_[Enemy::Zombie].damagePerHit));
+	
+	guiEnemyBalancing_.addItem(make_pair("Ghost hp", enemyStats_[Enemy::Ghost].hp));
+	guiEnemyBalancing_.addItem(make_pair("Ghost secondsPerHit", enemyStats_[Enemy::Ghost].secondsPerHit));
+	guiEnemyBalancing_.addItem(make_pair("Ghost damagePerHit", enemyStats_[Enemy::Ghost].damagePerHit));
+	
+	guiEnemyBalancing_.addItem(make_pair("Godzilla hp", enemyStats_[Enemy::Godzilla].hp));
+	guiEnemyBalancing_.addItem(make_pair("Godzilla secondsPerHit", enemyStats_[Enemy::Godzilla].secondsPerHit));
+	guiEnemyBalancing_.addItem(make_pair("Godzilla damagePerHit", enemyStats_[Enemy::Godzilla].damagePerHit));
 	
 	//Load the building tileset
 	string buildingsName="assets/buildings.png";
@@ -185,6 +218,31 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 	buildingStats_[Building::Bank].maxHp=buildingBalancing["Bank maxHp"];
 	buildingStats_[Building::Bank].slowing=buildingBalancing["Bank slowing"];
 	
+	map<string, float> enemyBalancing=guiEnemyBalancing_.getItems();
+	enemyStats_[Enemy::Zombie].hp=enemyBalancing["Zombie hp"];
+	enemyStats_[Enemy::Zombie].secondsPerHit=enemyBalancing["Zombie secondsPerHit"];
+	enemyStats_[Enemy::Zombie].damagePerHit=enemyBalancing["Zombie damagePerHit"];
+	
+	enemyStats_[Enemy::Ghost].hp=enemyBalancing["Ghost hp"];
+	enemyStats_[Enemy::Ghost].secondsPerHit=enemyBalancing["Ghost secondsPerHit"];
+	enemyStats_[Enemy::Ghost].damagePerHit=enemyBalancing["Ghost damagePerHit"];
+	
+	enemyStats_[Enemy::Godzilla].hp=enemyBalancing["Godzilla hp"];
+	enemyStats_[Enemy::Godzilla].secondsPerHit=enemyBalancing["Godzilla secondsPerHit"];
+	enemyStats_[Enemy::Godzilla].damagePerHit=enemyBalancing["Godzilla damagePerHit"];
+	
+	for(vector<Wave>::iterator waveIt=waves_.begin(); waveIt!=waves_.end(); waveIt++)
+	{
+		if(waveIt==waves_.begin())
+		{
+			waveIt->changeEnemyStats(enemyStats_, true);
+		}
+		else
+		{
+			waveIt->changeEnemyStats(enemyStats_);
+		}
+	}
+	
 	for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
 	{
 		buildingIt->setMoney(buildingStats_[buildingIt->getType()].moneyPerMinute);
@@ -212,12 +270,12 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 	if(!waves_.empty())
 	{
 		//Updating information gui
-		guiBottomRight_.update(dt, window, waves_.front().getEnemyTypes(), waves_.front().getTimeInSeconds(), incomeTimeLeft, gold_);
+		guiBottomRight_.update(dt, window, waves_[0].getEnemyTypes(), waves_[0].getTimeInSeconds(), incomeTimeLeft, gold_);
 		
 		//Count down current wave timer
-		if(waves_.front().getTimeInSeconds()>0)
+		if(waves_[0].getTimeInSeconds()>0)
 		{
-			waves_.front().update(dt);
+			waves_[0].update(dt);
 		}
 		else
 		{
@@ -230,7 +288,7 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 				totalSlowing+=buildingIt->getSlowing();
 			}
 			
-			int buildingDamage=waves_.front().update(dt, totalDmgPerSec, totalSlowing);
+			int buildingDamage=waves_[0].update(dt, totalDmgPerSec, totalSlowing);
 			
 			//Reducing building HP
 			for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
@@ -245,10 +303,10 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 					}
 				}
 			}
-			if(waves_.front().getEnemies().empty())
+			if(waves_[0].getEnemies().empty())
 			{
 				waveDefeated_.play();
-				waves_.pop();
+				waves_.erase(waves_.begin());
 			}
 			
 			if(buildings_.empty())
@@ -304,7 +362,8 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
 	!guiBuildingChoice_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y) &&
 	!guiBalancing_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y) &&
-	!guiBuildingBalancing_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y))
+	!guiBuildingBalancing_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y) &&
+	!guiEnemyBalancing_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y))
 	{
 		bool placable=true;
 		

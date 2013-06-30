@@ -27,6 +27,19 @@ vector<int> Wave::getEnemyTypes()
 	return enemyTypes_;
 }
 
+void Wave::changeEnemyStats(map<Enemy::EnemyType, EnemyStats> enemyStats, bool first)
+{
+	for(vector<Enemy>::iterator enemyIt=enemies_.begin(); enemyIt!=enemies_.end(); enemyIt++)
+	{
+		if(!first)
+		{
+			enemyIt->setHp(enemyStats[enemyIt->getType()].hp);
+		}
+		enemyIt->setSecondsPerHit(enemyStats[enemyIt->getType()].secondsPerHit);
+		enemyIt->setDamagePerHit(enemyStats[enemyIt->getType()].damagePerHit);
+	}
+}
+
 int Wave::update(float dt, int damageTaken, int slowing)
 {
 	int damage=0;
