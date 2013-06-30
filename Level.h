@@ -18,6 +18,7 @@ using namespace rapidxml;
 #include "Map.h"
 #include "Wave.h"
 #include "Building.h"
+#include "BuildingStats.h"
 #include "GuiBuildingChoice.h"
 #include "GuiBottomRight.h"
 #include "GuiBalancing.h"
@@ -41,11 +42,13 @@ private:
 	GuiBuildingChoice guiBuildingChoice_;
 	GuiBottomRight guiBottomRight_;
 	GuiBalancing guiBalancing_;
+	GuiBalancing guiBuildingBalancing_;
 	sf::Clock incomeClock_;
 	int incomeClockTime_;
 	sf::Sound waveDefeated_;
 	sf::Sound income_;
 	int baseDamage_;
+	map<Building::BuildingType, BuildingStats> buildingStats_;
 };
 
 #endif

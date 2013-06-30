@@ -7,6 +7,8 @@ using namespace std;
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
 
+#include "BuildingStats.h"
+
 class Building
 {
 public:
@@ -19,18 +21,19 @@ public:
 		Bank,
 		None
 	};
-	Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures, sf::Vector2i tileSize);
+	Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures, sf::Vector2i tileSize, BuildingStats buildingStats);
 	//Balancing stuff!
-	static int getCost(BuildingType type);
-	
 	static sf::IntRect getRect(BuildingType type, sf::Vector2i position);
 	static sf::Vector2i getTilesetPosition(BuildingType type);
 	BuildingType getType();
 	//Balancing stuff!
 	int getMoney();
+	void setMoney(int amount);
 	int getDamagePerSecond();
+	void setDamagePerSecond(int amount);
 	int decreaseHp(int amount);
 	float getSlowing();
+	void setSlowing(float amount);
 	sf::Vector2i getPosition();
 	void draw(sf::RenderWindow &window);
 private:
