@@ -29,6 +29,47 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	
 	view_=sf::View(sf::FloatRect(0, 0, windowSize.x, windowSize.y));
 	
+	BuildingStats townCenter;
+	townCenter.cost=10;
+	townCenter.moneyPerMinute=5;
+	townCenter.damagePerSecond=0;
+	townCenter.maxHp=100;
+	townCenter.slowing=0;
+	
+	BuildingStats house;
+	house.cost=10;
+	house.moneyPerMinute=10;
+	house.damagePerSecond=0;
+	house.maxHp=100;
+	house.slowing=0;
+	
+	BuildingStats wall;
+	wall.cost=10;
+	wall.moneyPerMinute=5;
+	wall.damagePerSecond=0;
+	wall.maxHp=100;
+	wall.slowing=0.5;
+	
+	BuildingStats turret;
+	turret.cost=10;
+	turret.moneyPerMinute=5;
+	turret.damagePerSecond=5;
+	turret.maxHp=100;
+	turret.slowing=0;
+	
+	BuildingStats bank;
+	bank.cost=20;
+	bank.moneyPerMinute=20;
+	bank.damagePerSecond=0;
+	bank.maxHp=100;
+	bank.slowing=0;
+	
+	buildingStats_.insert(pair<Building::BuildingType, BuildingStats>(Building::TownCenter, townCenter));
+	buildingStats_.insert(pair<Building::BuildingType, BuildingStats>(Building::House, house));
+	buildingStats_.insert(pair<Building::BuildingType, BuildingStats>(Building::Wall, wall));
+	buildingStats_.insert(pair<Building::BuildingType, BuildingStats>(Building::Turret, turret));
+	buildingStats_.insert(pair<Building::BuildingType, BuildingStats>(Building::Bank, bank));
+	
 	//Balancing stuff!
 	gold_=50;
 	scrollThreshold_=8;
@@ -39,11 +80,42 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	desktop.Add(guiBuildingChoice_.getWindow());
 	desktop.Add(guiBottomRight_.getWindow());
 	desktop.Add(guiBalancing_.getWindow());
+	desktop.Add(guiBuildingBalancing_.getWindow());
 	
 	guiBalancing_.addItem(make_pair("scrollThreshold", scrollThreshold_));
 	guiBalancing_.addItem(make_pair("scrollSpeed", scrollSpeed_));
 	guiBalancing_.addItem(make_pair("incomeClockTime", incomeClockTime_));
 	guiBalancing_.addItem(make_pair("baseDamage", baseDamage_));
+	
+	guiBuildingBalancing_.addItem(make_pair("TownCenter cost", buildingStats_[Building::TownCenter].cost));
+	guiBuildingBalancing_.addItem(make_pair("TownCenter moneyPerMinute", buildingStats_[Building::TownCenter].moneyPerMinute));
+	guiBuildingBalancing_.addItem(make_pair("TownCenter damagePerSecond", buildingStats_[Building::TownCenter].damagePerSecond));
+	guiBuildingBalancing_.addItem(make_pair("TownCenter maxHp", buildingStats_[Building::TownCenter].maxHp));
+	guiBuildingBalancing_.addItem(make_pair("TownCenter slowing", buildingStats_[Building::TownCenter].slowing));
+	
+	guiBuildingBalancing_.addItem(make_pair("House cost", buildingStats_[Building::House].cost));
+	guiBuildingBalancing_.addItem(make_pair("House moneyPerMinute", buildingStats_[Building::House].moneyPerMinute));
+	guiBuildingBalancing_.addItem(make_pair("House damagePerSecond", buildingStats_[Building::House].damagePerSecond));
+	guiBuildingBalancing_.addItem(make_pair("House maxHp", buildingStats_[Building::House].maxHp));
+	guiBuildingBalancing_.addItem(make_pair("House slowing", buildingStats_[Building::House].slowing));
+	
+	guiBuildingBalancing_.addItem(make_pair("Wall cost", buildingStats_[Building::Wall].cost));
+	guiBuildingBalancing_.addItem(make_pair("Wall moneyPerMinute", buildingStats_[Building::Wall].moneyPerMinute));
+	guiBuildingBalancing_.addItem(make_pair("Wall damagePerSecond", buildingStats_[Building::Wall].damagePerSecond));
+	guiBuildingBalancing_.addItem(make_pair("Wall maxHp", buildingStats_[Building::Wall].maxHp));
+	guiBuildingBalancing_.addItem(make_pair("Wall slowing", buildingStats_[Building::Wall].slowing));
+	
+	guiBuildingBalancing_.addItem(make_pair("Turret cost", buildingStats_[Building::Turret].cost));
+	guiBuildingBalancing_.addItem(make_pair("Turret moneyPerMinute", buildingStats_[Building::Turret].moneyPerMinute));
+	guiBuildingBalancing_.addItem(make_pair("Turret damagePerSecond", buildingStats_[Building::Turret].damagePerSecond));
+	guiBuildingBalancing_.addItem(make_pair("Turret maxHp", buildingStats_[Building::Turret].maxHp));
+	guiBuildingBalancing_.addItem(make_pair("Turret slowing", buildingStats_[Building::Turret].slowing));
+	
+	guiBuildingBalancing_.addItem(make_pair("Bank cost", buildingStats_[Building::Bank].cost));
+	guiBuildingBalancing_.addItem(make_pair("Bank moneyPerMinute", buildingStats_[Building::Bank].moneyPerMinute));
+	guiBuildingBalancing_.addItem(make_pair("Bank damagePerSecond", buildingStats_[Building::Bank].damagePerSecond));
+	guiBuildingBalancing_.addItem(make_pair("Bank maxHp", buildingStats_[Building::Bank].maxHp));
+	guiBuildingBalancing_.addItem(make_pair("Bank slowing", buildingStats_[Building::Bank].slowing));
 	
 	//Load the building tileset
 	string buildingsName="assets/buildings.png";
@@ -81,6 +153,44 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 	scrollSpeed_=balancing["scrollSpeed"];
 	incomeClockTime_=balancing["incomeClockTime"];
 	baseDamage_=balancing["baseDamage"];
+	
+	map<string, float> buildingBalancing=guiBuildingBalancing_.getItems();
+	buildingStats_[Building::TownCenter].cost=buildingBalancing["TownCenter cost"];
+	buildingStats_[Building::TownCenter].moneyPerMinute=buildingBalancing["TownCenter moneyPerMinute"];
+	buildingStats_[Building::TownCenter].damagePerSecond=buildingBalancing["TownCenter damagePerSecond"];
+	buildingStats_[Building::TownCenter].maxHp=buildingBalancing["TownCenter maxHp"];
+	buildingStats_[Building::TownCenter].slowing=buildingBalancing["TownCenter slowing"];
+	
+	buildingStats_[Building::House].cost=buildingBalancing["House cost"];
+	buildingStats_[Building::House].moneyPerMinute=buildingBalancing["House moneyPerMinute"];
+	buildingStats_[Building::House].damagePerSecond=buildingBalancing["House damagePerSecond"];
+	buildingStats_[Building::House].maxHp=buildingBalancing["House maxHp"];
+	buildingStats_[Building::House].slowing=buildingBalancing["House slowing"];
+	
+	buildingStats_[Building::Wall].cost=buildingBalancing["Wall cost"];
+	buildingStats_[Building::Wall].moneyPerMinute=buildingBalancing["Wall moneyPerMinute"];
+	buildingStats_[Building::Wall].damagePerSecond=buildingBalancing["Wall damagePerSecond"];
+	buildingStats_[Building::Wall].maxHp=buildingBalancing["Wall maxHp"];
+	buildingStats_[Building::Wall].slowing=buildingBalancing["Wall slowing"];
+	
+	buildingStats_[Building::Turret].cost=buildingBalancing["Turret cost"];
+	buildingStats_[Building::Turret].moneyPerMinute=buildingBalancing["Turret moneyPerMinute"];
+	buildingStats_[Building::Turret].damagePerSecond=buildingBalancing["Turret damagePerSecond"];
+	buildingStats_[Building::Turret].maxHp=buildingBalancing["Turret maxHp"];
+	buildingStats_[Building::Turret].slowing=buildingBalancing["Turret slowing"];
+	
+	buildingStats_[Building::Bank].cost=buildingBalancing["Bank cost"];
+	buildingStats_[Building::Bank].moneyPerMinute=buildingBalancing["Bank moneyPerMinute"];
+	buildingStats_[Building::Bank].damagePerSecond=buildingBalancing["Bank damagePerSecond"];
+	buildingStats_[Building::Bank].maxHp=buildingBalancing["Bank maxHp"];
+	buildingStats_[Building::Bank].slowing=buildingBalancing["Bank slowing"];
+	
+	for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
+	{
+		buildingIt->setMoney(buildingStats_[buildingIt->getType()].moneyPerMinute);
+		buildingIt->setDamagePerSecond(buildingStats_[buildingIt->getType()].damagePerSecond);
+		buildingIt->setSlowing(buildingStats_[buildingIt->getType()].slowing);
+	}
 
 	
 	int incomeTimeLeft=incomeClockTime_-incomeClock_.getElapsedTime().asSeconds();
@@ -112,7 +222,7 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 		else
 		{
 			//Getting building damage and slowing
-			int totalDmgPerSec=0;
+			int totalDmgPerSec=baseDamage_;
 			int totalSlowing=0;
 			for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
 			{
@@ -193,7 +303,8 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 	//If mouse is not on top of Building choice menu we can place
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
 	!guiBuildingChoice_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y) &&
-	!guiBalancing_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y))
+	!guiBalancing_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y) &&
+	!guiBuildingBalancing_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y))
 	{
 		bool placable=true;
 		
@@ -227,15 +338,15 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 		if(placable)
 		{
 			//Have the money?
-			if(gold_>=Building::getCost(choice))
+			if(gold_>=buildingStats_[choice].cost)
 			{
 				if(choice!=Building::TownCenter)
 				{
 					//We want to build something other than a TC so does a TC exist?
 					if(!buildings_.empty() && buildings_[0].getType()==Building::TownCenter)
 					{
-						buildings_.push_back(Building(choice, sf::Vector2i(potentialRect.left, potentialRect.top), textures, tileSize));
-						gold_-=Building::getCost(choice);
+						buildings_.push_back(Building(choice, sf::Vector2i(potentialRect.left, potentialRect.top), textures, tileSize, buildingStats_[choice]));
+						gold_-=buildingStats_[choice].cost;
 					}
 					else
 					{
@@ -247,8 +358,8 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 					//We want to build a TC so does a TC exist already?
 					if(buildings_.empty() || buildings_[0].getType()!=Building::TownCenter)
 					{
-						buildings_.insert(buildings_.begin(), Building(choice, sf::Vector2i(potentialRect.left, potentialRect.top), textures, tileSize));
-						gold_-=Building::getCost(choice);
+						buildings_.insert(buildings_.begin(), Building(choice, sf::Vector2i(potentialRect.left, potentialRect.top), textures, tileSize, buildingStats_[choice]));
+						gold_-=buildingStats_[choice].cost;
 					}
 					else
 					{

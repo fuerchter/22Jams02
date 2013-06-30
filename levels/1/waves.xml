@@ -1,4 +1,4 @@
 <waves>
-	<wave timeInSeconds="5" zombies="5" ghosts="0" godzillas="0" />
-	<wave timeInSeconds="5" zombies="2" ghosts="0" godzillas="0" />
+	<wave timeInSeconds="20" zombies="2" ghosts="0" godzillas="0" />
+	<wave timeInSeconds="20" zombies="5" ghosts="0" godzillas="0" />
 </waves>

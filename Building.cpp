@@ -1,72 +1,11 @@
 #include "Building.h"
 
-Building::Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures, sf::Vector2i tileSize):
-type_(type), position_(position)
-{
-	switch(type_)
-	{
-	case TownCenter:
-		moneyPerMinute_=5;
-		hp_=100;
-		damagePerSecond_=0;
-		slowing_=0;
-		break;
-	case House:
-		moneyPerMinute_=20;
-		hp_=100;
-		damagePerSecond_=0;
-		slowing_=0;
-		break;
-	case Wall:
-		moneyPerMinute_=0;
-		hp_=100;
-		damagePerSecond_=0;
-		slowing_=1;
-		break;
-	case Turret:
-		moneyPerMinute_=0;
-		hp_=100;
-		damagePerSecond_=10;
-		slowing_=0;
-		break;
-	case Bank:
-		moneyPerMinute_=50;
-		hp_=100;
-		damagePerSecond_=0;
-		slowing_=0;
-		break;
-	default:
-		break;
-	}
-	
+Building::Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures, sf::Vector2i tileSize, BuildingStats buildingStats):
+type_(type), moneyPerMinute_(buildingStats.moneyPerMinute), damagePerSecond_(buildingStats.damagePerSecond), hp_(buildingStats.maxHp), slowing_(buildingStats.slowing), position_(position)
+{	
 	sprite_=sf::Sprite(textures["assets/buildings.png"]);
 	sprite_.setTextureRect(sf::IntRect(getTilesetPosition(type_).x*tileSize.x, getTilesetPosition(type_).y*tileSize.y, getRect(type_, position_).width*tileSize.x, getRect(type_, position_).height*tileSize.y));
 	sprite_.setPosition(position_.x*tileSize.x, position_.y*tileSize.y);
-}
-
-int Building::getCost(BuildingType type)
-{
-	switch(type)
-	{
-	case TownCenter:
-		return 10;
-		break;
-	case House:
-		return 10;
-		break;
-	case Wall:
-		return 10;
-		break;
-	case Turret:
-		return 10;
-		break;
-	case Bank:
-		return 10;
-		break;
-	default:
-		return -1;
-		break;
-	}
 }
 
 sf::IntRect Building::getRect(BuildingType type, sf::Vector2i position)
@@ -129,9 +68,19 @@ int Building::getMoney()
 	return moneyPerMinute_;
 }
 
+void Building::setMoney(int amount)
+{
+	moneyPerMinute_=amount;
+}
+
 int Building::getDamagePerSecond()
 {
 	return damagePerSecond_;
+}
+
+void Building::setDamagePerSecond(int amount)
+{
+	damagePerSecond_=amount;
 }
 
 int Building::decreaseHp(int amount)
@@ -142,6 +91,11 @@ int Building::decreaseHp(int amount)
 float Building::getSlowing()
 {
 	return slowing_;
+}
+
+void Building::setSlowing(float amount)
+{
+	slowing_=amount;
 }
 
 sf::Vector2i Building::getPosition()
