@@ -1,6 +1,6 @@
 #include "Building.h"
 
-Building::Building(BuildingType type, sf::Vector2i position):
+Building::Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures):
 type_(type), position_(position)
 {
 	switch(type_)
@@ -18,6 +18,10 @@ type_(type), position_(position)
 	default:
 		break;
 	}
+	
+	sprite_=sf::Sprite(textures["assets/buildings.png"]);
+	sprite_.setTextureRect(sf::IntRect(getTilesetPosition(type_).x*32, getTilesetPosition(type_).y*32, getRect(type_, position_).width*32, getRect(type_, position_).height*32));
+	sprite_.setPosition(position_.x*32, position_.y*32);
 }
 
 int Building::getCost(BuildingType type)
@@ -70,7 +74,42 @@ sf::IntRect Building::getRect(BuildingType type, sf::Vector2i position)
 	}
 }
 
+sf::Vector2i Building::getTilesetPosition(BuildingType type)
+{
+	switch(type)
+	{
+	case TownCenter:
+		return sf::Vector2i(0, 1);
+		break;
+	case House:
+		return sf::Vector2i(3, 0);
+		break;
+	case Wall:
+		return sf::Vector2i(0, 0);
+		break;
+	case Turret:
+		return sf::Vector2i(0, 0);
+		break;
+	case Bank:
+		return sf::Vector2i(0, 4);
+		break;
+	default:
+		return sf::Vector2i(-1, -1);
+		break;
+	}
+}
+
 Building::BuildingType Building::getType()
 {
 	return type_;
+}
+
+sf::Vector2i Building::getPosition()
+{
+	return position_;
+}
+
+void Building::draw(sf::RenderWindow &window)
+{
+	window.draw(sprite_);
 }

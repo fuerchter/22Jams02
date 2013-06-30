@@ -40,7 +40,10 @@ gold_(50), guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	desktop.Add(guiBuildingChoice_.getWindow());
 	desktop.Add(guiBottomRight_.getWindow());
 	
-	buildings_.push_back(Building(Building::TownCenter, sf::Vector2i(0, 0)));
+	sf::Texture buildingsTexture;
+	buildingsTexture.loadFromFile("assets/buildings.png");
+	textures.insert(pair<string, sf::Texture>("assets/buildings.png", buildingsTexture));
+	//buildings_.push_back(Building(Building::TownCenter, sf::Vector2i(0, 0), textures));
 }
 
 sf::FloatRect Level::getViewBounds()
@@ -48,7 +51,7 @@ sf::FloatRect Level::getViewBounds()
 	return sf::FloatRect(view_.getCenter().x-view_.getSize().x/2, view_.getCenter().y-view_.getSize().y/2, view_.getSize().x, view_.getSize().y);
 }
 
-void Level::update(float dt, sf::RenderWindow &window)
+void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> &textures)
 {
 	if(waves_.front().getTimeInSeconds()>0)
 	{
@@ -83,31 +86,55 @@ void Level::update(float dt, sf::RenderWindow &window)
 	sf::Vector2f cursorPosition(getViewBounds().left+mousePosition.x, getViewBounds().top+mousePosition.y);
 	sf::Vector2f offset((int)cursorPosition.x%mapSize.x, (int)cursorPosition.y%mapSize.y);
 	cursorPosition-=offset;
-	cursor_.setPosition(cursorPosition.x, cursorPosition.y);
+	cursor_.setPosition((int)cursorPosition.x, (int)cursorPosition.y);
 	
-	if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	//If mouse is not on top of Building choice menu we can place
+	if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && !guiBuildingChoice_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y))
 	{
 		Building::BuildingType choice=guiBuildingChoice_.getChoice();
-		if(choice!=Building::TownCenter)
+		bool placable=true;
+		sf::IntRect potentialRect=Building::getRect(choice, sf::Vector2i(cursorPosition.x/mapSize.x, cursorPosition.y/mapSize.y));
+		for(int x=potentialRect.left; x<potentialRect.left+potentialRect.width; x++)
 		{
-			if(!buildings_.empty() && buildings_[0].getType()==Building::TownCenter)
+			for(int y=potentialRect.top; y<potentialRect.top+potentialRect.height; y++)
 			{
-				if(gold_>=Building::getCost(choice))
+				if(map_.getMap()->layers[0]->data[(int)x+y*map_.getMap()->width]==2)
 				{
-					bool placable=true;
-					sf::IntRect potentialRect=Building::getRect(choice, sf::Vector2i(cursorPosition.x/mapSize.x, cursorPosition.y/mapSize.y));
-					for(int x=potentialRect.left; x<potentialRect.left+potentialRect.width; x++)
+					placable=false;
+					break;
+				}
+			}
+		}
+		
+		for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
+		{
+			if(potentialRect.intersects(buildingIt->getRect(buildingIt->getType(), buildingIt->getPosition())))
+			{
+				placable=false;
+				break;
+			}
+		}
+		
+		if(placable)
+		{
+			if(gold_>=Building::getCost(choice))
+			{
+				if(choice!=Building::TownCenter)
+				{
+					if(!buildings_.empty() && buildings_[0].getType()==Building::TownCenter)
 					{
-						for(int y=potentialRect.top; y<potentialRect.top+potentialRect.height; y++)
-						{
-							if(map_.getMap()->layers[0]->data[(int)x+y*map_.getMap()->width]==2)
-							{
-								placable=false;
-								break;
-							}
-						}
+						buildings_.push_back(Building(choice, sf::Vector2i(potentialRect.left, potentialRect.top), textures));
+						gold_-=Building::getCost(choice);
 					}
-					cout << placable << endl;
+				}
+				else
+				{
+					//No TC exists yet
+					if(buildings_.empty() || buildings_[0].getType()!=Building::TownCenter)
+					{
+						buildings_.insert(buildings_.begin(), Building(choice, sf::Vector2i(potentialRect.left, potentialRect.top), textures));
+						gold_-=Building::getCost(choice);
+					}
 				}
 			}
 		}
@@ -123,5 +150,9 @@ void Level::draw(sf::RenderWindow &window)
 {
 	window.setView(view_);
 	map_.draw(window);
+	for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
+	{
+		buildingIt->draw(window);
+	}
 	window.draw(cursor_);
 }

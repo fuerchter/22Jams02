@@ -55,7 +55,7 @@ int main (int argc, const char * argv[])
 		}
 		
 		//UPDATE SECTION
-		level.update(deltaTime.asSeconds(), window);
+		level.update(deltaTime.asSeconds(), window, textures);
 		desktop.Update(deltaTime.asSeconds());
 		//UPDATE SECTION
 		

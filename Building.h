@@ -19,10 +19,13 @@ public:
 		Bank,
 		None
 	};
-	Building(BuildingType type, sf::Vector2i position);
+	Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures);
 	static int getCost(BuildingType type);
 	static sf::IntRect getRect(BuildingType type, sf::Vector2i position);
+	static sf::Vector2i getTilesetPosition(BuildingType type);
 	BuildingType getType();
+	sf::Vector2i getPosition();
+	void draw(sf::RenderWindow &window);
 private:
 	BuildingType type_;
 	int moneyPerMinute_;
@@ -30,6 +33,7 @@ private:
 	int hp_;
 	int slowing_;
 	sf::Vector2i position_;
+	sf::Sprite sprite_;
 };
 
 #endif

@@ -25,7 +25,7 @@ class Level
 public:
 	Level(map<string, sf::Texture> &textures, string name, sf::Vector2u windowSize, sfg::Desktop &desktop);
 	sf::FloatRect getViewBounds();
-	void update(float dt, sf::RenderWindow &window);
+	void update(float dt, sf::RenderWindow &window, map<string, sf::Texture> &textures);
 	void draw(sf::RenderWindow &window);
 private:
 	Map map_;
