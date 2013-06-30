@@ -38,6 +38,8 @@ private:
 	sf::Sprite cursor_;
 	GuiBuildingChoice guiBuildingChoice_;
 	GuiBottomRight guiBottomRight_;
+	sf::Clock incomeClock_;
+	int incomeClockTime_;
 };
 
 #endif

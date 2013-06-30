@@ -20,10 +20,15 @@ public:
 		None
 	};
 	Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures, sf::Vector2i tileSize);
+	//Balancing stuff!
 	static int getCost(BuildingType type);
+	
 	static sf::IntRect getRect(BuildingType type, sf::Vector2i position);
 	static sf::Vector2i getTilesetPosition(BuildingType type);
 	BuildingType getType();
+	//Balancing stuff!
+	int getMoney();
+	
 	sf::Vector2i getPosition();
 	void draw(sf::RenderWindow &window);
 private:

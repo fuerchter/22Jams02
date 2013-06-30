@@ -6,14 +6,19 @@ type_(type), position_(position)
 	switch(type_)
 	{
 	case TownCenter:
+		moneyPerMinute_=5;
 		break;
 	case House:
+		moneyPerMinute_=20;
 		break;
 	case Wall:
+		moneyPerMinute_=0;
 		break;
 	case Turret:
+		moneyPerMinute_=0;
 		break;
 	case Bank:
+		moneyPerMinute_=50;
 		break;
 	default:
 		break;
@@ -102,6 +107,11 @@ sf::Vector2i Building::getTilesetPosition(BuildingType type)
 Building::BuildingType Building::getType()
 {
 	return type_;
+}
+
+int Building::getMoney()
+{
+	return moneyPerMinute_;
 }
 
 sf::Vector2i Building::getPosition()

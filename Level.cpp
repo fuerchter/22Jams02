@@ -1,7 +1,7 @@
 #include "Level.h"
 
 Level::Level(map<string, sf::Texture> &textures, string name, sf::Vector2u windowSize, sfg::Desktop &desktop):
-gold_(50), guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
+guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 {
 	string folderName="levels/" +name;
 	map_=Map(textures, folderName+ "/level");
@@ -29,8 +29,11 @@ gold_(50), guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	
 	view_=sf::View(sf::FloatRect(0, 0, windowSize.x, windowSize.y));
 	
+	//Balancing stuff!
+	gold_=50;
 	scrollThreshold_=8;
 	scrollSpeed_=128;
+	incomeClockTime_=30;
 	
 	desktop.Add(guiBuildingChoice_.getWindow());
 	desktop.Add(guiBottomRight_.getWindow());
@@ -179,6 +182,18 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 	
 	//Updating information gui
 	guiBottomRight_.update(dt, waves_.front().getEnemyTypes(), waves_.front().getTimeInSeconds(), gold_);
+	
+	
+	if(incomeClock_.getElapsedTime().asSeconds()>=incomeClockTime_)
+	{
+		int income=0;
+		for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
+		{
+			income+=buildingIt->getMoney();
+		}
+		gold_+=income;
+		incomeClock_.restart();
+	}
 }
 
 void Level::draw(sf::RenderWindow &window)
