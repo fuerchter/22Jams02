@@ -108,7 +108,7 @@ sf::Vector2i Building::getTilesetPosition(BuildingType type)
 		return sf::Vector2i(0, 0);
 		break;
 	case Turret:
-		return sf::Vector2i(0, 0);
+		return sf::Vector2i(3, 2);
 		break;
 	case Bank:
 		return sf::Vector2i(0, 4);

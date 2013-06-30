@@ -15,12 +15,15 @@ class GuiBottomRight {
 		//void greetButtonClick();
 		//Building::BuildingType getChoice();
 		sfg::Window::Ptr getWindow();
-		void update(float dt, vector<int> enemyTypes, int timer, int gold);
+		void update(float dt, sf::RenderWindow &window, vector<int> enemyTypes, int timer, int goldTimer, int gold);
 	private:
 		//Create everything as Ptr and call their create() functions;
 		sfg::Label::Ptr preview_;
 		sfg::Label::Ptr timer_;
+		sfg::Label::Ptr goldTimer_;
 		sfg::Label::Ptr gold_;
+		sfg::Box::Ptr waveBox_;
+		sfg::Box::Ptr goldBox_;
 		sfg::Box::Ptr box_;
 		sfg::Window::Ptr window_;
 };

@@ -42,6 +42,8 @@ private:
 	sf::Clock incomeClock_;
 	int incomeClockTime_;
 	sf::Sound waveDefeated_;
+	sf::Sound income_;
+	int baseDamage_;
 };
 
 #endif

@@ -33,7 +33,8 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	gold_=50;
 	scrollThreshold_=8;
 	scrollSpeed_=128;
-	incomeClockTime_=3;
+	incomeClockTime_=15;
+	baseDamage_=20;
 	
 	desktop.Add(guiBuildingChoice_.getWindow());
 	desktop.Add(guiBottomRight_.getWindow());
@@ -54,6 +55,12 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	waveDefeated.loadFromFile(waveDefeatedName);
 	sounds.insert(pair<string, sf::SoundBuffer>(waveDefeatedName, waveDefeated));
 	waveDefeated_.setBuffer(sounds[waveDefeatedName]);
+	
+	string incomeName="assets/income.wav";
+	sf::SoundBuffer income;
+	income.loadFromFile(incomeName);
+	sounds.insert(pair<string, sf::SoundBuffer>(incomeName, income));
+	income_.setBuffer(sounds[incomeName]);
 }
 
 sf::FloatRect Level::getViewBounds()
@@ -63,10 +70,26 @@ sf::FloatRect Level::getViewBounds()
 
 void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> &textures)
 {
+	int incomeTimeLeft=incomeClockTime_-incomeClock_.getElapsedTime().asSeconds();
+	if(incomeTimeLeft<=0)
+	{
+		int income=0;
+		for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
+		{
+			income+=buildingIt->getMoney();
+		}
+		if(income>0)
+		{
+			income_.play();
+			gold_+=income;
+		}
+		incomeClock_.restart();
+	}
+
 	if(!waves_.empty())
 	{
 		//Updating information gui
-		guiBottomRight_.update(dt, waves_.front().getEnemyTypes(), waves_.front().getTimeInSeconds(), gold_);
+		guiBottomRight_.update(dt, window, waves_.front().getEnemyTypes(), waves_.front().getTimeInSeconds(), incomeTimeLeft, gold_);
 		
 		//Count down current wave timer
 		if(waves_.front().getTimeInSeconds()>0)
@@ -227,18 +250,6 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 		{
 			cout << "No building space!" << endl;
 		}
-	}
-	
-	
-	if(incomeClock_.getElapsedTime().asSeconds()>=incomeClockTime_)
-	{
-		int income=0;
-		for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
-		{
-			income+=buildingIt->getMoney();
-		}
-		gold_+=income;
-		incomeClock_.restart();
 	}
 }
 
