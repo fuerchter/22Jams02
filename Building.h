@@ -28,7 +28,9 @@ public:
 	BuildingType getType();
 	//Balancing stuff!
 	int getMoney();
-	
+	int getDamagePerSecond();
+	int decreaseHp(int amount);
+	float getSlowing();
 	sf::Vector2i getPosition();
 	void draw(sf::RenderWindow &window);
 private:
@@ -36,7 +38,7 @@ private:
 	int moneyPerMinute_;
 	int damagePerSecond_;
 	int hp_;
-	int slowing_;
+	float slowing_;
 	sf::Vector2i position_;
 	sf::Sprite sprite_;
 };

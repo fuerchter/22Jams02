@@ -7,6 +7,7 @@
 #include <queue>
 using namespace std;
 
+#include "SFML/Audio.hpp"
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
 
@@ -23,7 +24,7 @@ using namespace rapidxml;
 class Level
 {
 public:
-	Level(map<string, sf::Texture> &textures, string name, sf::Vector2u windowSize, sfg::Desktop &desktop);
+	Level(map<string, sf::Texture> &textures, map<string, sf::SoundBuffer> &sounds, string name, sf::Vector2u windowSize, sfg::Desktop &desktop);
 	sf::FloatRect getViewBounds();
 	void update(float dt, sf::RenderWindow &window, map<string, sf::Texture> &textures);
 	void draw(sf::RenderWindow &window);
@@ -40,6 +41,7 @@ private:
 	GuiBottomRight guiBottomRight_;
 	sf::Clock incomeClock_;
 	int incomeClockTime_;
+	sf::Sound waveDefeated_;
 };
 
 #endif
