@@ -1,6 +1,6 @@
 #include "Level.h"
 
-Level::Level(map<string, sf::Texture> &textures, string name, sf::Vector2u windowSize, sfg::Desktop &desktop):
+Level::Level(map<string, sf::Texture> &textures, map<string, sf::SoundBuffer> &sounds, string name, sf::Vector2u windowSize, sfg::Desktop &desktop):
 guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 {
 	string folderName="levels/" +name;
@@ -33,7 +33,7 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	gold_=50;
 	scrollThreshold_=8;
 	scrollSpeed_=128;
-	incomeClockTime_=30;
+	incomeClockTime_=3;
 	
 	desktop.Add(guiBuildingChoice_.getWindow());
 	desktop.Add(guiBottomRight_.getWindow());
@@ -48,6 +48,12 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	
 	//Half transparent preview
 	cursor_.setColor(sf::Color(255, 255, 255, 122));
+	
+	string waveDefeatedName="assets/waveDefeated.wav";
+	sf::SoundBuffer waveDefeated;
+	waveDefeated.loadFromFile(waveDefeatedName);
+	sounds.insert(pair<string, sf::SoundBuffer>(waveDefeatedName, waveDefeated));
+	waveDefeated_.setBuffer(sounds[waveDefeatedName]);
 }
 
 sf::FloatRect Level::getViewBounds()
@@ -57,14 +63,57 @@ sf::FloatRect Level::getViewBounds()
 
 void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> &textures)
 {
-	//Count down current wave timer
-	if(waves_.front().getTimeInSeconds()>0)
+	if(!waves_.empty())
 	{
-		waves_.front().update(dt);
+		//Updating information gui
+		guiBottomRight_.update(dt, waves_.front().getEnemyTypes(), waves_.front().getTimeInSeconds(), gold_);
+		
+		//Count down current wave timer
+		if(waves_.front().getTimeInSeconds()>0)
+		{
+			waves_.front().update(dt);
+		}
+		else
+		{
+			//Getting building damage and slowing
+			int totalDmgPerSec=0;
+			int totalSlowing=0;
+			for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
+			{
+				totalDmgPerSec+=buildingIt->getDamagePerSecond();
+				totalSlowing+=buildingIt->getSlowing();
+			}
+			
+			int buildingDamage=waves_.front().update(dt, totalDmgPerSec, totalSlowing);
+			
+			//Reducing building HP
+			for(vector<Building>::iterator buildingIt=buildings_.begin(); buildingIt!=buildings_.end(); buildingIt++)
+			{
+				if(buildingDamage>0)
+				{
+					//cout << "Building HP: " << buildingIt->decreaseHp(0) << endl;
+					if(buildingIt->decreaseHp(buildingDamage)<=0)
+					{
+						buildings_.erase(buildingIt);
+						buildingIt--;
+					}
+				}
+			}
+			if(waves_.front().getEnemies().empty())
+			{
+				waveDefeated_.play();
+				waves_.pop();
+			}
+			
+			if(buildings_.empty())
+			{
+				cout << "lose" << endl;
+			}
+		}
 	}
 	else
 	{
-		//Attack!!!
+		cout << "win" << endl;
 	}
 	
 	//Scroll if mouse is scrollThreshold_ pixels from the screen edge
@@ -179,9 +228,6 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 			cout << "No building space!" << endl;
 		}
 	}
-	
-	//Updating information gui
-	guiBottomRight_.update(dt, waves_.front().getEnemyTypes(), waves_.front().getTimeInSeconds(), gold_);
 	
 	
 	if(incomeClock_.getElapsedTime().asSeconds()>=incomeClockTime_)

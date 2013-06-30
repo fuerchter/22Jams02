@@ -4,6 +4,8 @@
 #include <string>
 using namespace std;
 
+#include "SFML/Audio.hpp"
+
 #include <SFGUI/SFGUI.hpp>
 
 #include "Level.h"
@@ -14,10 +16,11 @@ int main (int argc, const char * argv[])
 	sfg::Desktop desktop;
 
 	map<string, sf::Texture> textures;
+	map<string, sf::SoundBuffer> sounds;
 	
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "test");
 	
-	Level level(textures, "1", window.getSize(), desktop);
+	Level level(textures, sounds, "1", window.getSize(), desktop);
 	
 	sf::Clock clock;
 	sf::Time previousTick=clock.getElapsedTime();

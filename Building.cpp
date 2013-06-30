@@ -7,18 +7,33 @@ type_(type), position_(position)
 	{
 	case TownCenter:
 		moneyPerMinute_=5;
+		hp_=100;
+		damagePerSecond_=0;
+		slowing_=0;
 		break;
 	case House:
 		moneyPerMinute_=20;
+		hp_=100;
+		damagePerSecond_=0;
+		slowing_=0;
 		break;
 	case Wall:
 		moneyPerMinute_=0;
+		hp_=100;
+		damagePerSecond_=0;
+		slowing_=1;
 		break;
 	case Turret:
 		moneyPerMinute_=0;
+		hp_=100;
+		damagePerSecond_=10;
+		slowing_=0;
 		break;
 	case Bank:
 		moneyPerMinute_=50;
+		hp_=100;
+		damagePerSecond_=0;
+		slowing_=0;
 		break;
 	default:
 		break;
@@ -112,6 +127,21 @@ Building::BuildingType Building::getType()
 int Building::getMoney()
 {
 	return moneyPerMinute_;
+}
+
+int Building::getDamagePerSecond()
+{
+	return damagePerSecond_;
+}
+
+int Building::decreaseHp(int amount)
+{
+	return hp_-=amount;
+}
+
+float Building::getSlowing()
+{
+	return slowing_;
 }
 
 sf::Vector2i Building::getPosition()
