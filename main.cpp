@@ -19,7 +19,7 @@ int main (int argc, const char * argv[])
 	map<string, sf::Texture> textures;
 	map<string, sf::SoundBuffer> sounds;
 	
-	sf::RenderWindow window(sf::VideoMode(1280, 720), "test");
+	sf::RenderWindow window(sf::VideoMode(1280, 720), "22Jams02");
 	
 	int levelCounter=1;
 	
