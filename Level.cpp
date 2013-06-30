@@ -158,6 +158,11 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	
 	cursor_=sf::Sprite(textures[buildingsName]);
 	
+	string pixName="assets/pix.png";
+	sf::Texture pixTexture;
+	pixTexture.loadFromFile(pixName);
+	textures.insert(pair<string, sf::Texture>(pixName, pixTexture));
+	
 	//Half transparent preview
 	cursor_.setColor(sf::Color(255, 255, 255, 122));
 	
@@ -296,7 +301,7 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 				if(buildingDamage>0)
 				{
 					//cout << "Building HP: " << buildingIt->decreaseHp(0) << endl;
-					if(buildingIt->decreaseHp(buildingDamage)<=0)
+					if(buildingIt->decreaseHp(buildingDamage, buildingStats_[buildingIt->getType()].maxHp)<=0)
 					{
 						buildings_.erase(buildingIt);
 						buildingIt--;

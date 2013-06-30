@@ -1,11 +1,17 @@
 #include "Building.h"
 
 Building::Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures, sf::Vector2i tileSize, BuildingStats buildingStats):
-type_(type), moneyPerMinute_(buildingStats.moneyPerMinute), damagePerSecond_(buildingStats.damagePerSecond), hp_(buildingStats.maxHp), slowing_(buildingStats.slowing), position_(position)
+type_(type), moneyPerMinute_(buildingStats.moneyPerMinute), damagePerSecond_(buildingStats.damagePerSecond), hp_(buildingStats.maxHp), slowing_(buildingStats.slowing), position_(position), lifeBar_(textures["assets/pix.png"])
 {	
 	sprite_=sf::Sprite(textures["assets/buildings.png"]);
 	sprite_.setTextureRect(sf::IntRect(getTilesetPosition(type_).x*tileSize.x, getTilesetPosition(type_).y*tileSize.y, getRect(type_, position_).width*tileSize.x, getRect(type_, position_).height*tileSize.y));
 	sprite_.setPosition(position_.x*tileSize.x, position_.y*tileSize.y);
+	
+	lifeBar_.setPosition(sprite_.getPosition());
+	lifeBar_.setScale(getRect(type_, position_).width*tileSize.x, 5);
+	lifeBar_.setColor(sf::Color(255, 0, 0));
+	
+	tileSize_=tileSize;
 }
 
 sf::IntRect Building::getRect(BuildingType type, sf::Vector2i position)
@@ -83,9 +89,12 @@ void Building::setDamagePerSecond(int amount)
 	damagePerSecond_=amount;
 }
 
-int Building::decreaseHp(int amount)
+int Building::decreaseHp(int amount, int maxHp)
 {
-	return hp_-=amount;
+	hp_-=amount;
+	float percent=(float)hp_/(float)maxHp;
+	lifeBar_.setScale(percent*getRect(type_, position_).width*tileSize_.x, 5);
+	return hp_;
 }
 
 float Building::getSlowing()
@@ -106,4 +115,5 @@ sf::Vector2i Building::getPosition()
 void Building::draw(sf::RenderWindow &window)
 {
 	window.draw(sprite_);
+	window.draw(lifeBar_);
 }
