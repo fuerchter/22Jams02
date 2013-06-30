@@ -20,6 +20,7 @@ using namespace rapidxml;
 #include "Building.h"
 #include "GuiBuildingChoice.h"
 #include "GuiBottomRight.h"
+#include "GuiBalancing.h"
 
 class Level
 {
@@ -39,6 +40,7 @@ private:
 	sf::Sprite cursor_;
 	GuiBuildingChoice guiBuildingChoice_;
 	GuiBottomRight guiBottomRight_;
+	GuiBalancing guiBalancing_;
 	sf::Clock incomeClock_;
 	int incomeClockTime_;
 	sf::Sound waveDefeated_;

@@ -5,13 +5,13 @@ SFML=C:/Users/fuerchter/Downloads/FULLSFML3
 SFGUI=C:/Users/fuerchter/Downloads/SFGUI
 RAPIDXML=C:/Users/fuerchter/Downloads/rapidxml-1.13/rapidxml-1.13
 
-all : main.o Level.o Map.o Wave.o Enemy.o GuiBuildingChoice.o Building.o GuiBottomRight.o
-	$(CC) main.o Level.o Map.o Wave.o Enemy.o GuiBuildingChoice.o Building.o GuiBottomRight.o -L$(SFML)/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -L$(SFGUI)/lib -lsfgui -L$(NLTMX) -lNLTmxMap
+all : main.o Level.o Map.o Wave.o Enemy.o GuiBuildingChoice.o Building.o GuiBottomRight.o GuiBalancing.o
+	$(CC) main.o Level.o Map.o Wave.o Enemy.o GuiBuildingChoice.o Building.o GuiBottomRight.o GuiBalancing.o -L$(SFML)/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -L$(SFGUI)/lib -lsfgui -L$(NLTMX) -lNLTmxMap
 	
 main.o : main.cpp Level.h Level.cpp
 	$(CC) $(CFLAGS) main.cpp -I$(SFML)/include -I$(NLTMX) -I$(RAPIDXML) -I$(SFGUI)/include
 
-Level.o : Level.h Level.cpp Map.h Map.cpp Wave.h Wave.cpp GuiBuildingChoice.h GuiBuildingChoice.cpp GuiBottomRight.h GuiBottomRight.cpp Building.h Building.cpp
+Level.o : Level.h Level.cpp Map.h Map.cpp Wave.h Wave.cpp GuiBuildingChoice.h GuiBuildingChoice.cpp GuiBottomRight.h GuiBottomRight.cpp Building.h Building.cpp GuiBalancing.h GuiBalancing.cpp
 	$(CC) $(CFLAGS) Level.cpp -I$(SFML)/include -I$(NLTMX) -I$(RAPIDXML) -I$(SFGUI)/include
 	
 Map.o : Map.h Map.cpp
@@ -31,3 +31,6 @@ Building.o : Building.h Building.cpp
 	
 GuiBottomRight.o : GuiBottomRight.h GuiBottomRight.cpp Enemy.h Enemy.cpp
 	$(CC) $(CFLAGS) GuiBottomRight.cpp -I$(SFML)/include -I$(SFGUI)/include
+	
+GuiBalancing.o : GuiBalancing.h GuiBalancing.cpp
+	$(CC) $(CFLAGS) GuiBalancing.cpp -I$(SFML)/include -I$(SFGUI)/include

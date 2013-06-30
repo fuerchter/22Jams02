@@ -38,6 +38,12 @@ guiBuildingChoice_(windowSize), guiBottomRight_(windowSize)
 	
 	desktop.Add(guiBuildingChoice_.getWindow());
 	desktop.Add(guiBottomRight_.getWindow());
+	desktop.Add(guiBalancing_.getWindow());
+	
+	guiBalancing_.addItem(make_pair("scrollThreshold", scrollThreshold_));
+	guiBalancing_.addItem(make_pair("scrollSpeed", scrollSpeed_));
+	guiBalancing_.addItem(make_pair("incomeClockTime", incomeClockTime_));
+	guiBalancing_.addItem(make_pair("baseDamage", baseDamage_));
 	
 	//Load the building tileset
 	string buildingsName="assets/buildings.png";
@@ -70,6 +76,13 @@ sf::FloatRect Level::getViewBounds()
 
 void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> &textures)
 {
+	map<string, float> balancing=guiBalancing_.getItems();
+	scrollThreshold_=balancing["scrollThreshold"];
+	scrollSpeed_=balancing["scrollSpeed"];
+	incomeClockTime_=balancing["incomeClockTime"];
+	baseDamage_=balancing["baseDamage"];
+
+	
 	int incomeTimeLeft=incomeClockTime_-incomeClock_.getElapsedTime().asSeconds();
 	if(incomeTimeLeft<=0)
 	{
@@ -178,7 +191,9 @@ void Level::update(float dt, sf::RenderWindow &window, map<string, sf::Texture> 
 	
 	
 	//If mouse is not on top of Building choice menu we can place
-	if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && !guiBuildingChoice_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y))
+	if(sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
+	!guiBuildingChoice_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y) &&
+	!guiBalancing_.getWindow()->GetAllocation().contains(mousePosition.x, mousePosition.y))
 	{
 		bool placable=true;
 		
