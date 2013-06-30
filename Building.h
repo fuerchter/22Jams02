@@ -31,7 +31,7 @@ public:
 	void setMoney(int amount);
 	int getDamagePerSecond();
 	void setDamagePerSecond(int amount);
-	int decreaseHp(int amount);
+	int decreaseHp(int amount, int maxHp);
 	float getSlowing();
 	void setSlowing(float amount);
 	sf::Vector2i getPosition();
@@ -44,6 +44,8 @@ private:
 	float slowing_;
 	sf::Vector2i position_;
 	sf::Sprite sprite_;
+	sf::Sprite lifeBar_;
+	sf::Vector2i tileSize_;
 };
 
 #endif
