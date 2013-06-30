@@ -1,6 +1,6 @@
 #include "Building.h"
 
-Building::Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures):
+Building::Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures, sf::Vector2i tileSize):
 type_(type), position_(position)
 {
 	switch(type_)
@@ -20,8 +20,8 @@ type_(type), position_(position)
 	}
 	
 	sprite_=sf::Sprite(textures["assets/buildings.png"]);
-	sprite_.setTextureRect(sf::IntRect(getTilesetPosition(type_).x*32, getTilesetPosition(type_).y*32, getRect(type_, position_).width*32, getRect(type_, position_).height*32));
-	sprite_.setPosition(position_.x*32, position_.y*32);
+	sprite_.setTextureRect(sf::IntRect(getTilesetPosition(type_).x*tileSize.x, getTilesetPosition(type_).y*tileSize.y, getRect(type_, position_).width*tileSize.x, getRect(type_, position_).height*tileSize.y));
+	sprite_.setPosition(position_.x*tileSize.x, position_.y*tileSize.y);
 }
 
 int Building::getCost(BuildingType type)

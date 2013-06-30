@@ -1,7 +1,7 @@
 #include "GuiBuildingChoice.h"
 
 GuiBuildingChoice::GuiBuildingChoice(sf::Vector2u windowSize) {
-	townCenter_=sfg::RadioButton::Create("TownCenter");
+	townCenter_=sfg::RadioButton::Create("Town Center");
 	townCenter_->SetActive(true);
 	house_=sfg::RadioButton::Create("House", townCenter_->GetGroup());
 	wall_=sfg::RadioButton::Create("Wall", townCenter_->GetGroup());

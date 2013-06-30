@@ -19,7 +19,7 @@ public:
 		Bank,
 		None
 	};
-	Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures);
+	Building(BuildingType type, sf::Vector2i position, map<string, sf::Texture> &textures, sf::Vector2i tileSize);
 	static int getCost(BuildingType type);
 	static sf::IntRect getRect(BuildingType type, sf::Vector2i position);
 	static sf::Vector2i getTilesetPosition(BuildingType type);
